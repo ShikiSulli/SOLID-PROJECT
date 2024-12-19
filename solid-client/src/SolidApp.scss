@@ -1,0 +1,82 @@
+.solid-app {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+
+  h1,
+  h2,
+  h3 {
+    color: #333;
+  }
+
+  input,
+  textarea,
+  button {
+    margin: 10px 0;
+    padding: 8px;
+    font-size: 16px;
+  }
+
+  button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #45a049;
+    }
+  }
+
+  .login-form,
+  .data-form,
+  .data-actions,
+  .sparql-form {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+
+  .login-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    input {
+      flex-grow: 1;
+      margin-right: 10px;
+    }
+  }
+
+  .data-form {
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .data-actions {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .sparql-form {
+    textarea {
+      width: 100%;
+      height: 100px;
+    }
+  }
+
+  .output {
+    background-color: #f8f8f8;
+    padding: 15px;
+    border-radius: 5px;
+
+    h3 {
+      margin-top: 0;
+    }
+  }
+}
