@@ -1,50 +1,46 @@
 import {
-  login,
-  handleIncomingRedirect,
-  getDefaultSession,
-} from "@inrupt/solid-client-authn-browser";
-import {
-  getSolidDataset,
-  getThing,
-  getStringNoLocale,
-  createSolidDataset,
-  saveSolidDatasetAt,
-  createThing,
-  setThing,
   addStringNoLocale,
-  getSourceUrl,
-  overwriteFile,
+  createSolidDataset,
+  createThing,
+  getSolidDataset,
+  getStringNoLocale,
+  getThing,
+  saveSolidDatasetAt,
+  setThing
 } from "@inrupt/solid-client";
-import rdf from "rdf-store-stream";
-import { SparqlParser, SparqlQueryExecutor } from "sparqljs";
+import {
+  getDefaultSession,
+  handleIncomingRedirect,
+  login
+} from "@inrupt/solid-client-authn-browser";
 
-// Gérer la redirection
+// Gérer la redirection après connexion
 async function handleRedirect() {
   await handleIncomingRedirect();
   const session = getDefaultSession();
 
   if (session.info.isLoggedIn) {
-    document.getElementById(
-      "output"
-    ).innerText = `Connecté en tant que : ${session.info.webId}`;
+    document.getElementById("output").innerText = `Connecté en tant que : ${session.info.webId}`;
     console.log("WebID :", session.info.webId);
-  } else {
-    console.log("Non connecté. Redirection en cours...");
   }
 }
 
+// Fonction de connexion
 async function loginSolid() {
+  const issuer = document.getElementById("oidcIssuer").value || "http://localhost:3000";
   try {
     await login({
-      oidcIssuer: "http://localhost:3000",
+      oidcIssuer: issuer,
       redirectUrl: window.location.href,
-      clientName: "Solid Local App",
+      clientName: "Solid Profile Manager"
     });
   } catch (error) {
     console.error("Erreur lors de la connexion :", error);
+    document.getElementById("output").innerText = "Erreur de connexion : " + error.message;
   }
 }
 
+// Fonction pour créer/mettre à jour des données dans le profil
 async function createSolidData() {
   const session = getDefaultSession();
   if (!session.info.isLoggedIn) {
@@ -55,86 +51,37 @@ async function createSolidData() {
   const title = document.getElementById("dataTitle").value;
   const content = document.getElementById("dataContent").value;
 
-  const datasetUrl = `${session.info.webId}/public/example`;
+  const profileUrl = "http://localhost:3000/hetic/profile/card";
   let dataset;
 
   try {
-    // Tente de récupérer le dataset existant
-    dataset = await getSolidDataset(datasetUrl, { fetch: session.fetch });
-  } catch (error) {
-    if (error.statusCode === 404) {
-      // Si le dataset n'existe pas, crée un nouveau dataset
-      dataset = createSolidDataset();
-    } else {
-      console.error("Erreur lors de la récupération du dataset :", error);
-      document.getElementById("output").innerText =
-        "Erreur lors de la récupération du dataset.";
-      return;
-    }
-  }
-
-  let thing = createThing({ name: "example" });
-  thing = addStringNoLocale(thing, "http://schema.org/name", title);
-  thing = addStringNoLocale(thing, "http://schema.org/text", content);
-  const updatedDataset = setThing(dataset, thing);
-
-  try {
-    await saveSolidDatasetAt(datasetUrl, updatedDataset, {
-      fetch: session.fetch,
-    });
-    document.getElementById("output").innerText = "Données créées avec succès.";
-  } catch (error) {
-    console.error("Erreur lors de la création des données :", error);
-    document.getElementById("output").innerText =
-      "Erreur lors de la création des données.";
-  }
-}
-
-async function writeDataToPod() {
-  const session = getDefaultSession();
-  if (!session.info.isLoggedIn) {
-    alert("Veuillez vous connecter d'abord.");
-    return;
-  }
-
-  try {
-    const podUrl = "http://localhost:3000/hetic/public/my-data.ttl";
-    let dataset;
-
     try {
-      // Tente de récupérer le dataset existant
-      dataset = await getSolidDataset(podUrl, { fetch: session.fetch });
+      dataset = await getSolidDataset(profileUrl, { fetch: session.fetch });
     } catch (error) {
       if (error.statusCode === 404) {
-        // Si le dataset n'existe pas, crée un nouveau dataset
         dataset = createSolidDataset();
       } else {
-        console.error("Erreur lors de la récupération du dataset :", error);
-        alert("Erreur lors de la récupération du dataset.");
-        return;
+        throw error;
       }
     }
 
-    // Crée un nouveau Thing
-    let myThing = createThing({ name: "example" });
-    myThing = addStringNoLocale(
-      myThing,
-      "https://schema.org/name",
-      "Mon Exemple de Donnée"
-    );
+    let profileThing = createThing({ url: `${profileUrl}#me` });
 
-    // Ajoute le Thing au dataset
-    dataset = setThing(dataset, myThing);
+    // Ajoute les données au profil
+    profileThing = addStringNoLocale(profileThing, "http://xmlns.com/foaf/0.1/name", title);
+    profileThing = addStringNoLocale(profileThing, "http://xmlns.com/foaf/0.1/description", content);
 
-    // Sauvegarde le dataset dans le Pod
-    await saveSolidDatasetAt(podUrl, dataset, { fetch: session.fetch });
-    alert("Données ajoutées avec succès dans le Pod !");
+    const updatedDataset = setThing(dataset, profileThing);
+
+    await saveSolidDatasetAt(profileUrl, updatedDataset, { fetch: session.fetch });
+    document.getElementById("output").innerText = "Données créées avec succès dans le profil.";
   } catch (error) {
-    console.error("Erreur lors de l'écriture des données :", error);
-    alert("Erreur : " + error.message);
+    console.error("Erreur lors de la création des données :", error);
+    document.getElementById("output").innerText = "Erreur : " + error.message;
   }
 }
 
+// Fonction pour lire les données du profil
 async function readData() {
   const session = getDefaultSession();
   if (!session.info.isLoggedIn) {
@@ -143,41 +90,27 @@ async function readData() {
   }
 
   try {
-    const podUrl = "http://localhost:3000/hetic/profile/card";
-    const dataset = await getSolidDataset(podUrl, { fetch: session.fetch });
-    const thingUrl = `${podUrl}#me`;
-    let thing = getThing(dataset, thingUrl);
+    const profileUrl = "http://localhost:3000/hetic/profile/card";
+    const dataset = await getSolidDataset(profileUrl, { fetch: session.fetch });
+    const profileThing = getThing(dataset, `${profileUrl}#me`);
 
-    if (!thing) {
-      // Si le Thing n'existe pas, crée un nouveau Thing
-      thing = createThing({ url: thingUrl });
-      thing = addStringNoLocale(
-        thing,
-        "https://schema.org/name",
-        "Nouveau Nom"
-      );
-      const updatedDataset = setThing(dataset, thing);
+    if (profileThing) {
+      const name = getStringNoLocale(profileThing, "http://xmlns.com/foaf/0.1/name");
+      const description = getStringNoLocale(profileThing, "http://xmlns.com/foaf/0.1/description");
 
-      // Sauvegarde le dataset mis à jour
-      await saveSolidDatasetAt(podUrl, updatedDataset, {
-        fetch: session.fetch,
-      });
       document.getElementById("output").innerText =
-        "Nouveau Thing créé avec succès.";
+        `Données du profil :\nNom : ${name || 'Non défini'}\nDescription : ${description || 'Non défini'}`;
     } else {
-      const value = getStringNoLocale(thing, "https://schema.org/name");
-      document.getElementById("output").innerText = `Données lues : ${
-        value || "Pas de données trouvées"
-      }`;
+      document.getElementById("output").innerText = "Aucun profil trouvé";
     }
   } catch (error) {
     console.error("Erreur lors de la lecture des données :", error);
-    document.getElementById("output").innerText =
-      "Erreur lors de la lecture des données.";
+    document.getElementById("output").innerText = "Erreur lors de la lecture : " + error.message;
   }
 }
 
-async function querySparql() {
+// Fonction pour écrire des données dans le Pod
+async function writeDataToPod() {
   const session = getDefaultSession();
   if (!session.info.isLoggedIn) {
     alert("Veuillez vous connecter d'abord.");
@@ -185,39 +118,38 @@ async function querySparql() {
   }
 
   try {
-    const podUrl = "http://localhost:3000/Hetic/public/my-data.ttl";
+    const profileUrl = "http://localhost:3000/hetic/profile/card";
+    let dataset;
 
-    // Récupère le dataset RDF
-    const dataset = await getSolidDataset(podUrl, { fetch: session.fetch });
+    try {
+      dataset = await getSolidDataset(profileUrl, { fetch: session.fetch });
+    } catch (error) {
+      if (error.statusCode === 404) {
+        dataset = createSolidDataset();
+      } else {
+        throw error;
+      }
+    }
 
-    // Transforme en un store RDF
-    const store = await rdf.dataset().import(dataset);
+    let thing = createThing({ url: `${profileUrl}#me` });
+    thing = addStringNoLocale(thing, "http://xmlns.com/foaf/0.1/name", "Nouveau nom");
+    thing = addStringNoLocale(thing, "http://xmlns.com/foaf/0.1/description", "Nouvelle description");
 
-    // Requête SPARQL
-    const sparqlQuery = document.getElementById("sparqlQuery").value;
-    const parser = new SparqlParser();
-    const query = parser.parse(sparqlQuery);
+    const updatedDataset = setThing(dataset, thing);
+    await saveSolidDatasetAt(profileUrl, updatedDataset, { fetch: session.fetch });
 
-    // Exécute la requête
-    const executor = new SparqlQueryExecutor(store);
-    const results = await executor.execute(query);
-
-    console.log("Résultats SPARQL :", results);
-    document.getElementById("output").innerText = JSON.stringify(
-      results,
-      null,
-      2
-    );
+    document.getElementById("output").innerText = "Données ajoutées avec succès dans le Pod !";
   } catch (error) {
-    console.error("Erreur lors de l'exécution de la requête SPARQL :", error);
-    document.getElementById("output").innerText =
-      "Erreur lors de l'exécution de la requête SPARQL.";
+    console.error("Erreur lors de l'écriture des données :", error);
+    document.getElementById("output").innerText = "Erreur : " + error.message;
   }
 }
 
-window.querySparql = querySparql;
+// Initialisation
+handleRedirect();
+
+// Export des fonctions pour l'utilisation dans le HTML
 window.loginSolid = loginSolid;
+window.createSolidData = createSolidData;
 window.readData = readData;
 window.writeDataToPod = writeDataToPod;
-window.createSolidData = createSolidData;
-handleRedirect();
