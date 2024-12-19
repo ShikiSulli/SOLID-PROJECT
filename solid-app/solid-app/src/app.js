@@ -32,7 +32,10 @@ async function loginSolid() {
     await login({
       oidcIssuer: issuer,
       redirectUrl: window.location.href,
-      clientName: "Solid Profile Manager"
+      clientName: "Solid Profile Manager",
+      // Ajout de paramètres de session
+      restorePreviousSession: true,
+      tokenType: "DPoP"
     });
   } catch (error) {
     console.error("Erreur lors de la connexion :", error);
@@ -43,8 +46,16 @@ async function loginSolid() {
 // Fonction pour créer/mettre à jour des données dans le profil
 async function createSolidData() {
   const session = getDefaultSession();
+
+  // Vérification détaillée de la session
   if (!session.info.isLoggedIn) {
-    alert("Vous devez être connecté pour créer des données.");
+    document.getElementById("output").innerText = "Session expirée. Reconnectez-vous.";
+    return;
+  }
+
+  // Vérification du token de session
+  if (!session.info.webId) {
+    await loginSolid(); // Reconnexion automatique
     return;
   }
 
@@ -55,11 +66,21 @@ async function createSolidData() {
   let dataset;
 
   try {
+    // Tentative de récupération du dataset avec gestion d'erreur améliorée
     try {
-      dataset = await getSolidDataset(profileUrl, { fetch: session.fetch });
+      dataset = await getSolidDataset(profileUrl, {
+        fetch: session.fetch,
+        // Ajout d'un timeout pour éviter les blocages
+        timeout: 5000
+      });
     } catch (error) {
       if (error.statusCode === 404) {
+        console.log("Dataset non trouvé, création d'un nouveau dataset");
         dataset = createSolidDataset();
+      } else if (error.statusCode === 401) {
+        document.getElementById("output").innerText = "Session expirée. Veuillez vous reconnecter.";
+        await loginSolid();
+        return;
       } else {
         throw error;
       }
@@ -67,19 +88,34 @@ async function createSolidData() {
 
     let profileThing = createThing({ url: `${profileUrl}#me` });
 
-    // Ajoute les données au profil
+    // Ajout des données
     profileThing = addStringNoLocale(profileThing, "http://xmlns.com/foaf/0.1/name", title);
     profileThing = addStringNoLocale(profileThing, "http://xmlns.com/foaf/0.1/description", content);
 
     const updatedDataset = setThing(dataset, profileThing);
 
-    await saveSolidDatasetAt(profileUrl, updatedDataset, { fetch: session.fetch });
-    document.getElementById("output").innerText = "Données créées avec succès dans le profil.";
+    // Sauvegarde avec gestion d'erreur améliorée
+    try {
+      await saveSolidDatasetAt(profileUrl, updatedDataset, {
+        fetch: session.fetch,
+        // Ajout d'un timeout pour éviter les blocages
+        timeout: 5000
+      });
+      document.getElementById("output").innerText = "Données créées avec succès dans le profil.";
+    } catch (error) {
+      if (error.statusCode === 401) {
+        document.getElementById("output").innerText = "Session expirée pendant la sauvegarde. Veuillez vous reconnecter.";
+        await loginSolid();
+      } else {
+        throw error;
+      }
+    }
   } catch (error) {
     console.error("Erreur lors de la création des données :", error);
-    document.getElementById("output").innerText = "Erreur : " + error.message;
+    document.getElementById("output").innerText = `Erreur : ${error.message}\nVeuillez vous reconnecter.`;
   }
 }
+
 
 // Fonction pour lire les données du profil
 async function readData() {
