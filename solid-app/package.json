@@ -9,13 +9,15 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "solid-server": "npx @solid/community-server -p 3000",
     "app-server": "npx http-server -p 8080",
-    "start": "concurrently \"npm run solid-server\" \"npm run app-server\""
+    "start": "concurrently \"npm run solid-server\" \"npm run app-server\"",
+    "start:all": "concurrently \"npm run solid-server\" \"npm run app-server\" \"npm run dev\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@comunica/query-sparql": "^4.0.2",
     "@inrupt/solid-client": "^2.1.2",
     "@inrupt/solid-client-authn-browser": "^2.3.0",
     "rdf-store-stream": "^2.0.1",

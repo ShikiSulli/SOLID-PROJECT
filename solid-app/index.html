@@ -1,50 +1,331 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Solid App - Neo Brutalist</title>
+    <style>
+      :root {
+        --bg-color: #f0f0f0;
+        --text-color: #1a1a1a;
+        --primary-color: #ff6b6b;
+        --secondary-color: #4ecdc4;
+        --accent-color: #feca57;
+        --border-color: #1a1a1a;
+        --error-color: #ff4757;
+      }
 
-<head>
-    <meta charset="UTF-8">
-    <title>Solid App</title>
-</head>
+      .dark-mode {
+        --bg-color: #1a1a1a;
+        --text-color: #f0f0f0;
+        --primary-color: #ff6b6b;
+        --secondary-color: #4ecdc4;
+        --accent-color: #feca57;
+        --border-color: #f0f0f0;
+        --error-color: #ff6b6b;
+      }
 
-<body>
-    <h1>Bienvenue dans votre Solid App</h1>
+      body {
+        font-family: "Courier New", monospace;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        line-height: 1.6;
+        padding: 20px;
+        transition: all 0.3s ease;
+      }
 
-    <!-- Formulaire de connexion -->
-    <div>
-        <label for="oidcIssuer">URL du fournisseur de Pod :</label>
-        <input type="text" id="oidcIssuer" placeholder="http://localhost:3000" size="40" />
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      h1,
+      h2 {
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+      }
+
+      .box {
+        background-color: var(--secondary-color);
+        border: 3px solid var(--border-color);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 5px 5px 0px var(--border-color);
+      }
+
+      input,
+      textarea,
+      button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: inherit;
+      }
+
+      button {
+        background-color: var(--primary-color);
+        color: var(--bg-color);
+        font-weight: bold;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      button:hover {
+        background-color: var(--accent-color);
+        transform: translateY(-3px);
+      }
+
+      #output,
+      #error {
+        background-color: var(--accent-color);
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 20px;
+        font-weight: bold;
+      }
+
+      #error {
+        background-color: var(--error-color);
+        color: var(--bg-color);
+      }
+
+      .theme-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: var(--primary-color);
+        color: var(--bg-color);
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      th,
+      td {
+        border: 2px solid var(--border-color);
+        padding: 10px;
+        text-align: left;
+      }
+
+      th {
+        background-color: var(--primary-color);
+        color: var(--bg-color);
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 10px;
+        }
+
+        .box {
+          padding: 15px;
+        }
+
+        input,
+        textarea,
+        button {
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Solid App</h1>
+
+      <div class="box">
+        <h2>Connexion</h2>
+        <input
+          type="text"
+          id="oidcIssuer"
+          placeholder="URL du fournisseur de Pod (ex: http://localhost:3000)"
+        />
         <button onclick="loginSolid()">Se connecter</button>
-    </div>
+      </div>
 
-    <!-- Formulaire pour créer des données Solid -->
-    <div style="margin-top: 20px;">
+      <div class="box">
         <h2>Créer des données Solid</h2>
         <form id="solidDataForm">
-            <label for="dataTitle">Titre :</label>
-            <input type="text" id="dataTitle" name="dataTitle" required /><br><br>
-            <label for="dataContent">Contenu :</label>
-            <textarea id="dataContent" name="dataContent" rows="4" cols="50" required></textarea><br><br>
-            <button type="button" onclick="createSolidData()">Créer des données</button>
+          <input
+            type="text"
+            id="dataTitle"
+            name="dataTitle"
+            placeholder="Titre"
+            required
+          />
+          <textarea
+            id="dataContent"
+            name="dataContent"
+            rows="4"
+            placeholder="Contenu"
+            required
+          ></textarea>
+          <button type="button" onclick="createSolidData()">
+            Créer des données
+          </button>
         </form>
-    </div>
+      </div>
 
-    <!-- Bouton pour lire les données -->
-    <div style="margin-top: 20px;">
+      <div class="box">
+        <h2>Gestion des données</h2>
         <button onclick="readData()">Lire les données du Pod</button>
-    </div>
-    <button onclick="writeDataToPod()">Ajouter des données dans le Pod</button>
+        <button onclick="writeDataToPod()">
+          Ajouter des données dans le Pod
+        </button>
+      </div>
 
-    <!-- Formulaire pour exécuter une requête SPARQL -->
-    <div style="margin-top: 20px;">
-        <h2>Exécuter une requête SPARQL</h2>
-        <textarea id="sparqlQuery" rows="4" cols="50" placeholder="Écrivez votre requête SPARQL ici"></textarea><br><br>
+      <div class="box">
+        <h2>Requête SPARQL</h2>
+        <textarea
+          id="sparqlQuery"
+          rows="4"
+          placeholder="Écrivez votre requête SPARQL ici"
+        ></textarea>
         <button onclick="querySparql()">Exécuter la requête SPARQL</button>
+      </div>
+
+      <div id="error"></div>
+      <div id="output"></div>
     </div>
 
-    <!-- Zone d'affichage des résultats -->
-    <div id="output" style="margin-top: 20px; font-weight: bold;"></div>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
 
     <script type="module" src="solid-app/src/app.js"></script>
-</body>
+    <script>
+      function toggleTheme() {
+        document.body.classList.toggle("dark-mode");
+      }
 
+      // Autocomplete for oidcIssuer input
+      document
+        .getElementById("oidcIssuer")
+        .addEventListener("input", function (e) {
+          if (e.target.value.startsWith("localhost")) {
+            e.target.value = "http://localhost:3000";
+          }
+        });
+
+      // Error display function
+      function displayError(message) {
+        const errorDiv = document.getElementById("error");
+        errorDiv.textContent = message;
+        errorDiv.style.display = "block";
+        setTimeout(() => {
+          errorDiv.style.display = "none";
+        }, 5000);
+      }
+
+      // SPARQL query result display function
+      function displaySparqlResults(results) {
+        const outputDiv = document.getElementById("output");
+        outputDiv.innerHTML = "";
+
+        if (results.length === 0) {
+          outputDiv.textContent = "No results found.";
+          return;
+        }
+
+        const table = document.createElement("table");
+        const headerRow = table.insertRow();
+
+        // Create table headers
+        Object.keys(results[0]).forEach((key) => {
+          const th = document.createElement("th");
+          th.textContent = key;
+          headerRow.appendChild(th);
+        });
+
+        // Add data rows
+        results.forEach((result) => {
+          const row = table.insertRow();
+          Object.values(result).forEach((value) => {
+            const cell = row.insertCell();
+            cell.textContent = value;
+          });
+        });
+
+        outputDiv.appendChild(table);
+      }
+
+      // Mock functions for demonstration (replace these with actual implementations)
+      function loginSolid() {
+        // Implement login logic here
+        console.log("Logging in...");
+      }
+
+      function createSolidData() {
+        // Implement data creation logic here
+        console.log("Creating Solid data...");
+      }
+
+      function readData() {
+        // Implement data reading logic here
+        console.log("Reading data from Pod...");
+      }
+
+      function writeDataToPod() {
+        // Implement data writing logic here
+        console.log("Writing data to Pod...");
+      }
+
+      function querySparql() {
+        const query = document.getElementById("sparqlQuery").value;
+        // Implement SPARQL query logic here
+        console.log("Executing SPARQL query:", query);
+
+        // Mock results for demonstration
+        const mockResults = [
+          {
+            subject: "http://example.org/resource1",
+            predicate: "http://example.org/name",
+            object: "Resource 1",
+          },
+          {
+            subject: "http://example.org/resource2",
+            predicate: "http://example.org/name",
+            object: "Resource 2",
+          },
+        ];
+
+        displaySparqlResults(mockResults);
+      }
+
+      // Error handling for each function
+      [
+        "loginSolid",
+        "createSolidData",
+        "readData",
+        "writeDataToPod",
+        "querySparql",
+      ].forEach((funcName) => {
+        const originalFunc = window[funcName];
+        window[funcName] = function () {
+          try {
+            originalFunc.apply(this, arguments);
+          } catch (error) {
+            displayError(`Error in ${funcName}: ${error.message}`);
+          }
+        };
+      });
+    </script>
+  </body>
 </html>
