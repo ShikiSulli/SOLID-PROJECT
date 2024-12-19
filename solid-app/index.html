@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Solid App</title>
+</head>
+
+<body>
+    <h1>Bienvenue dans votre Solid App</h1>
+
+    <!-- Formulaire de connexion -->
+    <div>
+        <label for="oidcIssuer">URL du fournisseur de Pod :</label>
+        <input type="text" id="oidcIssuer" placeholder="http://localhost:3000" size="40" />
+        <button onclick="loginSolid()">Se connecter</button>
+    </div>
+
+    <!-- Formulaire pour créer des données Solid -->
+    <div style="margin-top: 20px;">
+        <h2>Créer des données Solid</h2>
+        <form id="solidDataForm">
+            <label for="dataTitle">Titre :</label>
+            <input type="text" id="dataTitle" name="dataTitle" required /><br><br>
+            <label for="dataContent">Contenu :</label>
+            <textarea id="dataContent" name="dataContent" rows="4" cols="50" required></textarea><br><br>
+            <button type="button" onclick="createSolidData()">Créer des données</button>
+        </form>
+    </div>
+
+    <!-- Bouton pour lire les données -->
+    <div style="margin-top: 20px;">
+        <button onclick="readData()">Lire les données du Pod</button>
+    </div>
+    <button onclick="writeDataToPod()">Ajouter des données dans le Pod</button>
+
+    <!-- Formulaire pour exécuter une requête SPARQL -->
+    <div style="margin-top: 20px;">
+        <h2>Exécuter une requête SPARQL</h2>
+        <textarea id="sparqlQuery" rows="4" cols="50" placeholder="Écrivez votre requête SPARQL ici"></textarea><br><br>
+        <button onclick="querySparql()">Exécuter la requête SPARQL</button>
+    </div>
+
+    <!-- Zone d'affichage des résultats -->
+    <div id="output" style="margin-top: 20px; font-weight: bold;"></div>
+
+    <script type="module" src="solid-app/src/app.js"></script>
+</body>
+
+</html>

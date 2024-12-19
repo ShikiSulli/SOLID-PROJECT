@@ -1,0 +1,69 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix hetic: <http://www.hetic.fr/ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix uni: <http://www.university.org/ontology#> .
+
+hetic:Person rdf:type owl:Class ;
+    rdfs:label "Personne"@fr, "Person"@en ;
+    rdfs:comment "Une personne liée à l'université"@fr, "A person related to the university"@en .
+
+hetic:Student rdf:type owl:Class ;
+    rdfs:subClassOf hetic:Person ;
+    rdfs:label "Étudiant"@fr, "Student"@en ;
+    rdfs:comment "Un étudiant inscrit à l'université"@fr, "A student enrolled in the university"@en .
+
+hetic:Intervenant rdf:type owl:Class ;
+    rdfs:subClassOf hetic:Person ;
+    rdfs:label "Intervenant"@fr, "Lecturer"@en ;
+    rdfs:comment "Un intervenant enseignant à HETIC"@fr, "A lecturer teaching at HETIC"@en .
+
+hetic:Course rdf:type owl:Class ;
+    rdfs:label "Cours"@fr, "Course"@en ;
+    rdfs:comment "Un cours dispensé à l'université"@fr, "A course offered at the university"@en .
+
+hetic:Department rdf:type owl:Class ;
+    rdfs:label "Département"@fr, "Department"@en ;
+    rdfs:comment "Un département de l'université"@fr, "A university department"@en .
+
+# Properties
+uni:hasStudentId rdf:type owl:DatatypeProperty ;
+    rdfs:domain hetic:Student ;
+    rdfs:range xsd:string ;
+    rdfs:label "Numéro étudiant"@fr, "Student ID"@en .
+
+hetic:teachersCourse rdf:type owl:ObjectProperty ;
+    rdfs:domain hetic:Intervenant ;
+    rdfs:range hetic:Course ;
+    rdfs:label "Enseigne"@fr, "Teaches"@en .
+
+uni:attendsCourse rdf:type owl:ObjectProperty ;
+    rdfs:domain hetic:Student ;
+    rdfs:range hetic:Course ;
+    rdfs:label "Suit le cours"@fr, "Attends course"@en .
+
+uni:belongsToDepartment rdf:type owl:ObjectProperty ;
+    rdfs:domain hetic:Person ;
+    rdfs:range hetic:Department ;
+    rdfs:label "Appartient au département"@fr, "Belongs to department"@en .
+
+uni:hasName rdf:type owl:DatatypeProperty ;
+    rdfs:domain hetic:Person ;
+    rdfs:range xsd:string ;
+    rdfs:label "Nom"@fr, "Name"@en .
+
+uni:hasEmail rdf:type owl:DatatypeProperty ;
+    rdfs:domain hetic:Person ;
+    rdfs:range xsd:string ;
+    rdfs:label "Email"@fr, "Email"@en .
+
+uni:courseCode rdf:type owl:DatatypeProperty ;
+    rdfs:domain hetic:Course ;
+    rdfs:range xsd:string ;
+    rdfs:label "Code du cours"@fr, "Course code"@en .
+
+uni:courseTitle rdf:type owl:DatatypeProperty ;
+    rdfs:domain hetic:Course ;
+    rdfs:range xsd:string ;
+    rdfs:label "Titre du cours"@fr, "Course title"@en .
