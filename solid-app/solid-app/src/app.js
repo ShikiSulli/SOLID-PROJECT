@@ -148,6 +148,84 @@ async function writeDataToPod() {
 // Initialisation
 handleRedirect();
 
+// ---------------- Query SPARQL ----------------
+import { QueryEngine } from '@comunica/query-sparql';
+
+async function querySparql() {
+  const session = getDefaultSession();
+  if (!session.info.isLoggedIn) {
+    alert("Veuillez vous connecter d'abord.");
+    return;
+  }
+
+  try {
+    const profileUrl = "http://localhost:3000/hetic/profile/card";
+    const query = document.getElementById("sparqlQuery").value;
+
+    if (!query) {
+      throw new Error("Veuillez entrer une requête SPARQL");
+    }
+
+    const myEngine = new QueryEngine();
+
+    // Exécute la requête SPARQL
+    const bindingsStream = await myEngine.queryBindings(query, {
+      sources: [profileUrl],
+      fetch: session.fetch
+    });
+
+    // Collecte tous les résultats
+    const bindings = await bindingsStream.toArray();
+
+    // Convertit les résultats en format plus facile à manipuler
+    const results = bindings.map(binding => {
+      const result = {};
+      binding.forEach((value, key) => {
+        result[key] = value.value;
+      });
+      return result;
+    });
+
+    // Affiche les résultats
+    document.getElementById("output").innerHTML = formatSparqlResults(results);
+
+  } catch (error) {
+    console.error("Erreur lors de l'exécution de la requête SPARQL:", error);
+    document.getElementById("output").innerText =
+      "Erreur lors de l'exécution de la requête SPARQL: " + error.message;
+  }
+}
+
+// Fonction pour formater les résultats SPARQL
+function formatSparqlResults(results) {
+  if (!results || !results.length) {
+    return "Aucun résultat trouvé";
+  }
+
+  let html = '<table border="1" style="border-collapse: collapse; margin-top: 10px;">';
+
+  // En-têtes de colonnes
+  html += '<tr>';
+  Object.keys(results[0]).forEach(key => {
+    html += `<th style="padding: 8px;">${key}</th>`;
+  });
+  html += '</tr>';
+
+  // Données
+  results.forEach(row => {
+    html += '<tr>';
+    Object.values(row).forEach(value => {
+      html += `<td style="padding: 8px;">${value}</td>`;
+    });
+    html += '</tr>';
+  });
+
+  html += '</table>';
+  return html;
+}
+
+// Export de la fonction
+window.querySparql = querySparql;
 // Export des fonctions pour l'utilisation dans le HTML
 window.loginSolid = loginSolid;
 window.createSolidData = createSolidData;
