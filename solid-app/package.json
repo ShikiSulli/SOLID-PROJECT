@@ -9,7 +9,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "solid-server": "npx @solid/community-server -p 3000",
     "app-server": "npx http-server -p 8080",
-    "start": "concurrently \"npm run solid-server\" \"npm run app-server\""
+    "start": "concurrently \"npm run solid-server\" \"npm run app-server\"",
+    "start:all": "concurrently \"npm run solid-server\" \"npm run app-server\" \"npm run dev\""
   },
   "keywords": [],
   "author": "",
