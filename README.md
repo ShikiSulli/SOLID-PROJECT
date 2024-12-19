@@ -2,6 +2,8 @@
 
 Solid Project est une application simple et intuitive développée avec **Node.js** et **SolidServer**. Cette application permet de gérer des **PODS**, de consulter des données, et d'effectuer des requêtes **SPARQL** pour interagir avec le serveur **SOLID**.
 
+⚠️ Pour obtenir les données de l'application il faut scroll tout en bas ⚠️
+
 ---
 
 ## **Fonctionnalités principales 🌟**
