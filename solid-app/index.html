@@ -1,158 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Solid App - Neo Brutalist</title>
+    <style>
+      :root {
+        --bg-color: #f0f0f0;
+        --text-color: #1a1a1a;
+        --primary-color: #ff6b6b;
+        --secondary-color: #4ecdc4;
+        --accent-color: #feca57;
+        --border-color: #1a1a1a;
+        --error-color: #ff4757;
+      }
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Solid App - Neo Brutalist</title>
-  <style>
-    :root {
-      --bg-color: #f0f0f0;
-      --text-color: #1a1a1a;
-      --primary-color: #ff6b6b;
-      --secondary-color: #4ecdc4;
-      --accent-color: #feca57;
-      --border-color: #1a1a1a;
-      --error-color: #ff4757;
-    }
+      .dark-mode {
+        --bg-color: #1a1a1a;
+        --text-color: #f0f0f0;
+        --primary-color: #ff6b6b;
+        --secondary-color: #4ecdc4;
+        --accent-color: #feca57;
+        --border-color: #f0f0f0;
+        --error-color: #ff6b6b;
+      }
 
-    .dark-mode {
-      --bg-color: #1a1a1a;
-      --text-color: #f0f0f0;
-      --primary-color: #ff6b6b;
-      --secondary-color: #4ecdc4;
-      --accent-color: #feca57;
-      --border-color: #f0f0f0;
-      --error-color: #ff6b6b;
-    }
-
-    body {
-      font-family: "Courier New", monospace;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      line-height: 1.6;
-      padding: 20px;
-      transition: all 0.3s ease;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    h1,
-    h2 {
-      font-weight: bold;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-    }
-
-    .box {
-      background-color: var(--secondary-color);
-      border: 3px solid var(--border-color);
-      border-radius: 15px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 5px 5px 0px var(--border-color);
-    }
-
-    input,
-    textarea,
-    button {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: 2px solid var(--border-color);
-      border-radius: 10px;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      font-family: inherit;
-    }
-
-    button {
-      background-color: var(--primary-color);
-      color: var(--bg-color);
-      font-weight: bold;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    button:hover {
-      background-color: var(--accent-color);
-      transform: translateY(-3px);
-    }
-
-    #output,
-    #error {
-      background-color: var(--accent-color);
-      border: 2px solid var(--border-color);
-      border-radius: 10px;
-      padding: 15px;
-      margin-top: 20px;
-      font-weight: bold;
-    }
-
-    #error {
-      background-color: var(--error-color);
-      color: var(--bg-color);
-    }
-
-    .theme-toggle {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background-color: var(--primary-color);
-      color: var(--bg-color);
-      border: none;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      font-size: 24px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-
-    th,
-    td {
-      border: 2px solid var(--border-color);
-      padding: 10px;
-      text-align: left;
-    }
-
-    th {
-      background-color: var(--primary-color);
-      color: var(--bg-color);
-    }
-
-    @media (max-width: 600px) {
       body {
-        padding: 10px;
+        font-family: "Courier New", monospace;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        line-height: 1.6;
+        padding: 20px;
+        transition: all 0.3s ease;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      h1,
+      h2 {
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 20px;
       }
 
       .box {
-        padding: 15px;
+        background-color: var(--secondary-color);
+        border: 3px solid var(--border-color);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 5px 5px 0px var(--border-color);
       }
 
       input,
       textarea,
       button {
-        font-size: 14px;
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: inherit;
       }
-    }
-  </style>
-</head>
 
-<body>
-  <div class="container">
-    <h1>Solid App</h1>
+      button {
+        background-color: var(--primary-color);
+        color: var(--bg-color);
+        font-weight: bold;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      button:hover {
+        background-color: var(--accent-color);
+        transform: translateY(-3px);
+      }
+
+      #output,
+      #error {
+        background-color: var(--accent-color);
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 20px;
+        font-weight: bold;
+      }
+
+      #error {
+        background-color: var(--error-color);
+        color: var(--bg-color);
+      }
+
+      .theme-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: var(--primary-color);
+        color: var(--bg-color);
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      th,
+      td {
+        border: 2px solid var(--border-color);
+        padding: 10px;
+        text-align: left;
+      }
+
+      th {
+        background-color: var(--primary-color);
+        color: var(--bg-color);
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 10px;
+        }
+
+        .box {
+          padding: 15px;
+        }
+
+        input,
+        textarea,
+        button {
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Solid App</h1>
 
     <div class="box">
       <h2>Connexion</h2>
@@ -161,6 +159,28 @@
       <button onclick="loginSolid()">Se connecter</button>
     </div>
 
+      <div class="box">
+        <h2>Créer des données Solid</h2>
+        <form id="solidDataForm">
+          <input
+            type="text"
+            id="dataTitle"
+            name="dataTitle"
+            placeholder="Titre"
+            required
+          />
+          <textarea
+            id="dataContent"
+            name="dataContent"
+            rows="4"
+            placeholder="Contenu"
+            required
+          ></textarea>
+          <button type="button" onclick="createSolidData()">
+            Créer des données
+          </button>
+        </form>
+      </div>
     <div class="box">
       <h2>Créer des données Solid</h2>
       <form id="solidDataForm">
