@@ -1,0 +1,65 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix hetic:<http://www.hetic.fr/ontology#> .
+@prefix uni:  <http://www.university.org/ontology#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<http://www.hetic.fr/ontology> rdf:type owl:Ontology ;
+    owl:versionIRI <http://www.hetic.fr/ontology/v2> ;
+    rdfs:comment "Ontologie étendue pour gestion universitaire incluant cursus, bâtiments, événements et évaluations"@fr .
+
+# Classes
+hetic:Person       rdf:type owl:Class ;
+    rdfs:label "Personne"@fr, "Person"@en .
+hetic:Student      rdf:type owl:Class ; rdfs:subClassOf hetic:Person ; rdfs:label "Étudiant"@fr, "Student"@en .
+hetic:Professor    rdf:type owl:Class ; rdfs:subClassOf hetic:Person ; rdfs:label "Professeur"@fr, "Professor"@en .
+hetic:Department   rdf:type owl:Class ; rdfs:label "Département"@fr, "Department"@en .
+hetic:Program      rdf:type owl:Class ; rdfs:label "Programme"@fr, "Program"@en .
+hetic:Course       rdf:type owl:Class ; rdfs:label "Cours"@fr, "Course"@en .
+hetic:Enrollment   rdf:type owl:Class ; rdfs:label "Inscription"@fr, "Enrollment"@en .
+hetic:Grade        rdf:type owl:Class ; rdfs:label "Note"@fr, "Grade"@en .
+hetic:Semester     rdf:type owl:Class ; rdfs:label "Semestre"@fr, "Semester"@en .
+hetic:Building     rdf:type owl:Class ; rdfs:label "Bâtiment"@fr, "Building"@en .
+hetic:Room         rdf:type owl:Class ; rdfs:subClassOf hetic:Building ; rdfs:label "Salle"@fr, "Room"@en .
+hetic:Event        rdf:type owl:Class ; rdfs:label "Événement"@fr, "Event"@en .
+
+# Datatype properties
+uni:hasEmail       rdf:type owl:DatatypeProperty ; rdfs:domain hetic:Person ; rdfs:range xsd:string ; rdfs:label "Email"@fr, "Email"@en .
+uni:courseCode     rdf:type owl:DatatypeProperty ; rdfs:domain hetic:Course ; rdfs:range xsd:string ; rdfs:label "Code du cours"@fr, "Course code"@en .
+uni:credits        rdf:type owl:DatatypeProperty ; rdfs:domain hetic:Course ; rdfs:range xsd:integer ; rdfs:label "Crédits"@fr, "Credits"@en .
+uni:semesterName   rdf:type owl:DatatypeProperty ; rdfs:domain hetic:Semester ; rdfs:range xsd:string ; rdfs:label "Nom du semestre"@fr, "Semester name"@en .
+uni:startDate      rdf:type owl:DatatypeProperty ; rdfs:domain hetic:Semester ; rdfs:range xsd:date ; rdfs:label "Date de début"@fr, "Start date"@en .
+uni:endDate        rdf:type owl:DatatypeProperty ; rdfs:domain hetic:Semester ; rdfs:range xsd:date ; rdfs:label "Date de fin"@fr, "End date"@en .
+uni:capacity       rdf:type owl:DatatypeProperty ; rdfs:domain hetic:Room ; rdfs:range xsd:integer ; rdfs:label "Capacité"@fr, "Capacity"@en .
+uni:eventDate      rdf:type owl:DatatypeProperty ; rdfs:domain hetic:Event ; rdfs:range xsd:dateTime ; rdfs:label "Date de l'événement"@fr, "Event date"@en .
+
+# Object properties
+uni:takesCourse      rdf:type owl:ObjectProperty ; rdfs:domain hetic:Student ; rdfs:range hetic:Course ; rdfs:label "suit cours"@fr, "takes course"@en .
+uni:teachesCourse    rdf:type owl:ObjectProperty ; rdfs:domain hetic:Professor ; rdfs:range hetic:Course ; rdfs:label "enseigne cours"@fr, "teaches course"@en .
+uni:memberOfDept     rdf:type owl:ObjectProperty ; rdfs:domain hetic:Person ; rdfs:range hetic:Department ; rdfs:label "appartient au département"@fr, "member of department"@en .
+uni:offersProgram    rdf:type owl:ObjectProperty ; rdfs:domain hetic:Department ; rdfs:range hetic:Program ; rdfs:label "propose programme"@fr, "offers program"@en .
+uni:includesCourse   rdf:type owl:ObjectProperty ; rdfs:domain hetic:Program ; rdfs:range hetic:Course ; rdfs:label "inclut cours"@fr, "includes course"@en .
+uni:enrolledIn       rdf:type owl:ObjectProperty ; rdfs:domain hetic:Enrollment ; rdfs:range hetic:Course ; rdfs:label "inscrit à"@fr, "enrolled in"@en .
+uni:hasEnrollment    rdf:type owl:ObjectProperty ; rdfs:domain hetic:Student ; rdfs:range hetic:Enrollment ; rdfs:label "a inscription"@fr, "has enrollment"@en .
+uni:assignedGrade    rdf:type owl:ObjectProperty ; rdfs:domain hetic:Enrollment ; rdfs:range hetic:Grade ; rdfs:label "a note"@fr, "assigned grade"@en .
+uni:prerequisiteOf   rdf:type owl:ObjectProperty ; rdfs:domain hetic:Course ; rdfs:range hetic:Course ; rdfs:label "prérequis de"@fr, "prerequisite of"@en .
+uni:scheduledIn      rdf:type owl:ObjectProperty ; rdfs:domain hetic:Course ; rdfs:range hetic:Room ; rdfs:label "planifié en salle"@fr, "scheduled in"@en .
+uni:holdsEvent       rdf:type owl:ObjectProperty ; rdfs:domain hetic:Building ; rdfs:range hetic:Event ; rdfs:label "accueille événement"@fr, "holds event"@en .
+
+# Class axioms
+hetic:Enrollment rdf:type owl:Class ;
+    owl:equivalentClass [
+      rdf:type owl:Restriction ;
+      owl:onProperty uni:enrolledIn ;
+      owl:someValuesFrom hetic:Course
+    ], [
+      rdf:type owl:Restriction ;
+      owl:onProperty uni:assignedGrade ;
+      owl:someValuesFrom hetic:Grade
+    ] ;
+    rdfs:label "Inscription"@fr, "Enrollment"@en .
+
+# Disjoint classes
+hetic:Student    owl:disjointWith hetic:Professor .

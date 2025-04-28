@@ -1,0 +1,94 @@
+@prefix :     <http://www.hetic.fr/ontology#> .
+@prefix hetic: <http://www.hetic.fr/ontology#> .
+@prefix uni:   <http://www.university.org/ontology#> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+
+### Étudiants ###
+:Alice rdf:type hetic:Student ;
+       foaf:name "Alice Martin" ;
+       uni:hasEmail "alice@hetic.fr" ;
+       uni:memberOfDept :DeptInfo ;
+       uni:hasEnrollment :EnrollA1 .
+
+:Bob   rdf:type hetic:Student ;
+       foaf:name "Bob Durand" ;
+       uni:hasEmail "bob@hetic.fr" ;
+       uni:memberOfDept :DeptInfo ;
+       uni:hasEnrollment :EnrollB1, :EnrollB2 .
+
+### Professeurs ###
+:DrSmith rdf:type hetic:Professor ;
+         foaf:name "Dr. Smith" ;
+         uni:memberOfDept :DeptInfo ;
+         uni:teachesCourse :CourseAlgo .
+
+### Départements ###
+:DeptInfo rdf:type hetic:Department ;
+          rdfs:label "Informatique"@fr, "Computer Science"@en ;
+          uni:offersProgram :ProgCS .
+
+### Programmes ###
+:ProgCS rdf:type hetic:Program ;
+        rdfs:label "BSc Informatique"@fr, "BSc CS"@en ;
+        uni:includesCourse :CourseAlgo, :CourseWeb .
+
+### Cours ###
+:CourseAlgo rdf:type hetic:Course ;
+            uni:courseCode "CS101" ;
+            rdfs:label "Algorithmique"@fr, "Algorithms"@en ;
+            uni:credits 5 ;
+            uni:prerequisiteOf :CourseWeb ;
+            uni:scheduledIn :RoomA .
+
+:CourseWeb  rdf:type hetic:Course ;
+            uni:courseCode "CS102" ;
+            rdfs:label "Web sémantique"@fr, "Semantic Web"@en ;
+            uni:credits 4 ;
+            uni:prerequisiteOf :CourseDB ;
+            uni:scheduledIn :RoomB .
+
+### Semestres ###
+:Sem1 rdf:type hetic:Semester ;
+      uni:semesterName "Semestre 1"@fr, "Semester 1"@en ;
+      uni:startDate "2025-02-01"^^xsd:date ;
+      uni:endDate   "2025-06-30"^^xsd:date .
+
+### Inscriptions et notes ###
+:EnrollA1 rdf:type hetic:Enrollment ;
+          uni:enrolledIn :CourseAlgo ;
+          uni:assignedGrade :GradeA .
+
+:EnrollB1 rdf:type hetic:Enrollment ;
+          uni:enrolledIn :CourseAlgo ;
+          uni:assignedGrade :GradeB .
+
+:EnrollB2 rdf:type hetic:Enrollment ;
+          uni:enrolledIn :CourseWeb ;
+          uni:assignedGrade :GradeC .
+
+:GradeA rdf:type hetic:Grade ;
+        uni:gradeValue "15.5"^^xsd:decimal .
+
+:GradeB rdf:type hetic:Grade ;
+        uni:gradeValue "12.0"^^xsd:decimal .
+
+:GradeC rdf:type hetic:Grade ;
+        uni:gradeValue "14.0"^^xsd:decimal .
+
+### Bâtiments, salles et événements ###
+:BuildingMain rdf:type hetic:Building ;
+              rdfs:label "Bâtiment principal"@fr, "Main Building"@en ;
+              uni:holdsEvent :EventConf .
+
+:RoomA rdf:type hetic:Room ;
+       rdfs:label "Salle A"@fr, "Room A"@en ;
+       uni:capacity 30 .
+
+:RoomB rdf:type hetic:Room ;
+       rdfs:label "Salle B"@fr, "Room B"@en ;
+       uni:capacity 20 .
+
+:EventConf rdf:type hetic:Event ;
+           rdfs:label "Conférence RDF"@fr, "RDF Conference"@en ;
+           uni:eventDate "2025-05-20T10:00:00"^^xsd:dateTime .
